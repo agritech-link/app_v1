@@ -1,8 +1,15 @@
+import 'package:agritech_link/screens/dashboard/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../state/sign_up_notifier.dart';
 
-class PasswordCreationScreen extends StatelessWidget {
+class PasswordCreationScreen extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final signUpNotifier = ref.read(signUpProvider.notifier);
+    final signUpData = ref.watch(signUpProvider); // Watch the state for the sign-up data
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -46,6 +53,9 @@ class PasswordCreationScreen extends StatelessWidget {
                   border: OutlineInputBorder(),
                   suffixIcon: Icon(Icons.visibility_off),
                 ),
+                onChanged: (value) {
+                  signUpNotifier.updatePassword(value);
+                },
               ),
               SizedBox(height: 10),
               Text(
@@ -57,12 +67,47 @@ class PasswordCreationScreen extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   child: Text('DONE'),
-                  onPressed: () {
-                    // Implement account creation and navigation to the main app
+                  onPressed: () async {
+                    // Validate and submit the data to Supabase
+                    if ((signUpData.phoneNumber?.isEmpty ?? true) ||
+                        (signUpData.firstName?.isEmpty ?? true) ||
+                        (signUpData.lastName?.isEmpty ?? true) ||
+                        (signUpData.password?.isEmpty ?? true)) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please fill in all fields')),
+                      );
+                      return;
+                    }
+
+                    try {
+                      final response = await Supabase.instance.client.auth.signUp(
+                        email: signUpData.phoneNumber!,
+                        password: signUpData.password!,
+                        data: {
+                          'first_name': signUpData.firstName!,
+                          'last_name': signUpData.lastName!,
+                        },
+                      );
+
+                      // if (response.error != null) {
+                      //   // Handle the error
+                      //   ScaffoldMessenger.of(context).showSnackBar(
+                      //     SnackBar(content: Text('Sign up failed: ${response.error!.message}')),
+                      //   );
+                      // } else {
+                      //   // Success
+                      //   Navigator.of(context).pushReplacement(
+                      //     MaterialPageRoute(builder: (_) => HomeScreen()),
+                      //   );
+                      // }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: ${e.toString()}')),
+                      );
+                    }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context)
-                        .primaryColor, // Updated from 'primary' to 'backgroundColor'
+                    backgroundColor: Theme.of(context).primaryColor,
                     foregroundColor: Colors.black,
                     padding: EdgeInsets.symmetric(vertical: 15),
                   ),

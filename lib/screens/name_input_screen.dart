@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'password_creation_screen.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../state/sign_up_notifier.dart';
 
-class NameInputScreen extends StatelessWidget {
+class NameInputScreen extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final signUpNotifier = ref.read(signUpProvider.notifier);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -50,6 +55,9 @@ class NameInputScreen extends StatelessWidget {
                   hintText: 'First name',
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (value) {
+                  signUpNotifier.updateFirstName(value);
+                },
               ),
               SizedBox(height: 20),
               Text(
@@ -62,6 +70,9 @@ class NameInputScreen extends StatelessWidget {
                   hintText: 'Last name',
                   border: OutlineInputBorder(),
                 ),
+                onChanged: (value) {
+                  signUpNotifier.updateLastName(value);
+                },
               ),
 
 
