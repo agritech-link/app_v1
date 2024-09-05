@@ -1,8 +1,10 @@
+import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
+
 import 'screens/onboarding_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'screens/splash_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart/';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // void main() => runApp(MyApp());
@@ -11,9 +13,10 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: 'https://hrffwbvwxtdknbyvazlq.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZmZ3YnZ3eHRka25ieXZhemxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUzNjYwNzQsImV4cCI6MjA0MDk0MjA3NH0.0H0F-F85wk6FG27gh9mhPiUo3V6BTLuf29nQ6ymwjbk',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhyZmZ3YnZ3eHRka25ieXZhemxxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUzNjYwNzQsImV4cCI6MjA0MDk0MjA3NH0.0H0F-F85wk6FG27gh9mhPiUo3V6BTLuf29nQ6ymwjbk',
   );
-  runApp(MyApp());
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -27,16 +30,19 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme),
         primaryColor: Color(0xFFDDF71D),
-        scaffoldBackgroundColor: Colors.white, // Set background color for Scaffold
+        scaffoldBackgroundColor: Colors.white,
+        // Set background color for Scaffold
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white, // Background color of input fields
           border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey), // Customize border color
+            borderSide: BorderSide(color: Colors.grey),
+            // Customize border color
             borderRadius: BorderRadius.circular(10.0),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Color(0xFFDDF71D)), // Customize focused border color
+            borderSide: BorderSide(color: Color(0xFFDDF71D)),
+            // Customize focused border color
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
@@ -48,8 +54,8 @@ class MyApp extends StatelessWidget {
       home: SplashScreen(),
       routes: {
         '/onboarding': (context) => OnboardingScreen(),
+        '/dashboard': (context) => HomeScreen(),
       },
     );
   }
 }
-

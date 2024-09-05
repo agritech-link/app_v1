@@ -1,5 +1,7 @@
+import 'package:AgriTech_Link/screens/authentication/sign_in.dart';
+import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'phone_number_screen.dart';
+import 'email_screen.dart';
 
 class SmartAgricultureScreen extends StatelessWidget {
   @override
@@ -76,7 +78,9 @@ class SmartAgricultureScreen extends StatelessWidget {
                       // First button (unstyled, only text)
                       TextButton(
                         onPressed: () {
-                          // Button logic
+                          Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) => SignIn())
+                          );
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -85,10 +89,10 @@ class SmartAgricultureScreen extends StatelessWidget {
                           alignment: Alignment.centerLeft,
                         ),
                         child: Text(
-                          "Let's Explore",
+                          "Sign in",
                           style: TextStyle(
                             color:
-                            Colors.white, // Match text color to the theme
+                                Colors.white, // Match text color to the theme
                             fontSize: 16.0,
                           ),
                         ),
@@ -96,11 +100,10 @@ class SmartAgricultureScreen extends StatelessWidget {
 
                       // Second button (styled)
                       ElevatedButton(
-                        child: Text('GET STARTED'),
                         onPressed: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => PhoneVerificationScreen(),
+                              builder: (context) => EmailVerificationScreen(),
                             ),
                           );
                         },
@@ -112,6 +115,7 @@ class SmartAgricultureScreen extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(3.0)),
                         ),
+                        child: Text('GET STARTED'),
                       ),
                     ],
                   ),

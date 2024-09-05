@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -114,7 +115,7 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(height: 8),
                               Text('10 Boxes'),
                               SizedBox(height: 8),
-                              Text('₹250.00 /Box'),
+                              Text('K250.00 /Box'),
                             ],
                           ),
                         ),
@@ -129,7 +130,7 @@ class HomeScreen extends StatelessWidget {
                               SizedBox(height: 8),
                               Text('38 Boxes'),
                               SizedBox(height: 8),
-                              Text('₹250.00 /Box'),
+                              Text('K250.00 /Box'),
                             ],
                           ),
                         ),
@@ -142,25 +143,40 @@ class HomeScreen extends StatelessWidget {
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
-            label: 'Overview',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          border: Border(
+            top: BorderSide(color: Colors.grey.shade300, width: 1.0),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.crop),
-            label: 'Crops',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.store),
-            label: 'Market',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_circle),
-            label: 'Account',
-          ),
-        ],
+        ),
+        child: BottomNavigationBar(
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard),
+              label: 'Overview',
+            ),
+            BottomNavigationBarItem(
+              icon: FaIcon(
+                FontAwesomeIcons.seedling,
+                size: 20,
+                color: Colors.green,
+              ),
+              label: 'Crops',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.store),
+              label: 'Market',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_circle),
+              label: 'Account',
+            ),
+          ],
+          backgroundColor: Colors.white,
+          unselectedItemColor: Colors.black54,
+          selectedItemColor: Colors.black,
+          type: BottomNavigationBarType.fixed,
+        ),
       ),
     );
   }

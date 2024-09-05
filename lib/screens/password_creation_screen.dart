@@ -1,14 +1,19 @@
-import 'package:agritech_link/screens/dashboard/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../state/sign_up_notifier.dart';
+import '../providers/sign_up_notifier.dart';
+import '../screens/dashboard/home_screen.dart';
 
 class PasswordCreationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final signUpNotifier = ref.read(signUpProvider.notifier);
-    final signUpData = ref.watch(signUpProvider); // Watch the state for the sign-up data
+    final signUpData = ref.watch(signUpProvider);
+
+    bool isValidPassword(String password) {
+      final regex = RegExp(
+          r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$');
+      return regex.hasMatch(password);
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -33,6 +38,7 @@ class PasswordCreationScreen extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 5),
               Text(
                 "Create your password",
                 style: TextStyle(
@@ -69,40 +75,42 @@ class PasswordCreationScreen extends ConsumerWidget {
                   child: Text('DONE'),
                   onPressed: () async {
                     // Validate and submit the data to Supabase
-                    if ((signUpData.phoneNumber?.isEmpty ?? true) ||
+                    if ((signUpData.email?.isEmpty ?? true) ||
                         (signUpData.firstName?.isEmpty ?? true) ||
                         (signUpData.lastName?.isEmpty ?? true) ||
                         (signUpData.password?.isEmpty ?? true)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Please fill in all fields')),
+                        SnackBar(
+                          content: Text('Please fill in all fields'),
+                        ),
                       );
                       return;
                     }
 
-                    try {
-                      final response = await Supabase.instance.client.auth.signUp(
-                        email: signUpData.phoneNumber!,
-                        password: signUpData.password!,
-                        data: {
-                          'first_name': signUpData.firstName!,
-                          'last_name': signUpData.lastName!,
-                        },
-                      );
-
-                      // if (response.error != null) {
-                      //   // Handle the error
-                      //   ScaffoldMessenger.of(context).showSnackBar(
-                      //     SnackBar(content: Text('Sign up failed: ${response.error!.message}')),
-                      //   );
-                      // } else {
-                      //   // Success
-                      //   Navigator.of(context).pushReplacement(
-                      //     MaterialPageRoute(builder: (_) => HomeScreen()),
-                      //   );
-                      // }
-                    } catch (e) {
+                    if (!isValidPassword(signUpData.password!)) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: ${e.toString()}')),
+                        SnackBar(
+                          content: Text(
+                              'Password must be at least 6 characters long, contain a letter, a number, and a special character'),
+                          duration: Duration(seconds: 4),
+                        ),
+                      );
+                      return;
+                    }
+
+                    await signUpNotifier.signUp();
+
+                    if (signUpData.isSignedUp) {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (_) => HomeScreen()),
+                      );
+                    } else if (signUpData.errorMessage != null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                              'Sign-up failed: ${signUpData.errorMessage}'),
+                          duration: Duration(seconds: 4),
+                        ),
                       );
                     }
                   },

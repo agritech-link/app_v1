@@ -1,13 +1,28 @@
 import 'package:flutter/material.dart';
 import 'code_verification_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../state/sign_up_notifier.dart';
+import '../providers/sign_up_notifier.dart';
 
-class PhoneVerificationScreen extends ConsumerWidget {
+class EmailVerificationScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final signUpNotifier = ref.read(signUpProvider.notifier);
+
+    // Listen for sign-up state changes
+    ref.listen(signUpProvider, (previous, next) {
+      if (next.isSignedUp) { // Assuming `isSignedUp` is a boolean flag
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Signed up successfully!')),
+        );
+
+        // Navigate to the protected dashboard
+        Navigator.pushReplacementNamed(context, '/dashboard');
+      } else if (next.errorMessage != null && next.errorMessage!.isNotEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${next.errorMessage}')),
+        );
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -33,7 +48,7 @@ class PhoneVerificationScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "Let's verify your phone number with a code",
+                "Let's verify your email with a code",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -46,19 +61,19 @@ class PhoneVerificationScreen extends ConsumerWidget {
               ),
               SizedBox(height: 40),
               Text(
-                "Your phone number",
+                "Your email",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.phone),
-                  hintText: 'Phone number',
+                  prefixIcon: Icon(Icons.email),
+                  hintText: 'Email',
                   border: OutlineInputBorder(),
                 ),
-                keyboardType: TextInputType.phone,
+                keyboardType: TextInputType.emailAddress,
                 onChanged: (value) {
-                  signUpNotifier.updatePhoneNumber(value);
+                  signUpNotifier.updateEmail(value);
                 },
               ),
               Spacer(),
@@ -80,12 +95,12 @@ class PhoneVerificationScreen extends ConsumerWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).primaryColor, // Updated from 'primary' to 'backgroundColor'
-                    foregroundColor: Colors.black,
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 24.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3.0)
-                    )
+                      backgroundColor: Theme.of(context).primaryColor,
+                      foregroundColor: Colors.black,
+                      padding: EdgeInsets.symmetric(vertical: 15, horizontal: 24.0),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(3.0)
+                      )
                   ),
                 ),
               ),
