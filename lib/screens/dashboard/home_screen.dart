@@ -50,8 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   condition: 'Sunny',
                   humidity: 32,
                   precipitation: 3.8,
-                  windSpeed: 100
-              ),
+                  windSpeed: 100),
               SizedBox(height: 24),
               _buildSectionTitle('Crop Health', onViewAllPressed: () {}),
               SizedBox(height: 8),
@@ -63,15 +62,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         cropName: 'Tomato',
                         scanDate: '20 June, 2024',
                         health: 'Early blight',
-                        healthStatus: HealthStatus.warning
-                    ),
+                        healthStatus: HealthStatus.warning),
                     SizedBox(width: 12),
                     CropHealthCard(
                         cropName: 'Wheat',
                         scanDate: '23, June 2024',
                         health: 'Healthy',
-                        healthStatus: HealthStatus.good
-                    ),
+                        healthStatus: HealthStatus.good),
                   ],
                 ),
               ),
@@ -85,33 +82,33 @@ class _HomeScreenState extends State<HomeScreen> {
                     SizedBox(
                       width: 200, // Adjust this width as needed
                       child: MarketplaceCard(
-                          imageUrl: 'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-                          productName: 'Beefsteak tomato',
-                          quantity: '10 Boxes',
-                          price: 'K250.00 /Box',
-                          onBuyPressed: () {}
+                        imageUrl:
+                            'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                        productName: 'Beefsteak tomato',
+                        quantity: '10 Boxes',
+                        price: 'K250.00 /Box',
                       ),
                     ),
                     SizedBox(width: 12),
                     SizedBox(
                       width: 200, // Adjust this width as needed
                       child: MarketplaceCard(
-                          imageUrl: 'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
-                          productName: 'Hass Avocado',
-                          quantity: '38 Boxes',
-                          price: 'K250.00 /Box',
-                          onBuyPressed: () {}
+                        imageUrl:
+                            'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
+                        productName: 'Hass Avocado',
+                        quantity: '38 Boxes',
+                        price: 'K250.00 /Box',
                       ),
                     ),
                     SizedBox(width: 12),
                     SizedBox(
                       width: 200, // Adjust this width as needed
                       child: MarketplaceCard(
-                          imageUrl: 'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
-                          productName: 'Hass Avocado',
-                          quantity: '38 Boxes',
-                          price: 'K250.00 /Box',
-                          onBuyPressed: () {}
+                        imageUrl:
+                            'https://images.unsplash.com/photo-1459663296021-50769c04b149?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGFuZ2VyaW5lJTIwb3JhbmdlfGVufDB8fDB8fHww',
+                        productName: 'Tangerine Oranges',
+                        quantity: '96 Boxes',
+                        price: 'K250.00 /Box',
                       ),
                     ),
                   ],
@@ -133,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, {required VoidCallback onViewAllPressed}) {
+  Widget _buildSectionTitle(String title,
+      {required VoidCallback onViewAllPressed}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
