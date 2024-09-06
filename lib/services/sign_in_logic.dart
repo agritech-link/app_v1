@@ -4,8 +4,7 @@ import 'package:flutter/material.dart';
 
 class SignInLogic {
   static bool isValidPassword(String password) {
-    final regex = RegExp(
-        r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{6,}$');
+    final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
     return regex.hasMatch(password);
   }
 

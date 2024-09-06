@@ -1,183 +1,151 @@
+import 'package:AgriTech_Link/custom_widgets/crop_health_card.dart';
+import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
+import 'package:AgriTech_Link/custom_widgets/marketplace_item.dart';
+import 'package:AgriTech_Link/custom_widgets/weather_card.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  _HomeScreenState createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _currentIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFF4F4F4),
       appBar: AppBar(
-        title: Text('Good afternoon'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.sunny),
-                    SizedBox(width: 8),
-                    Text('29°C Sunny / Today'),
-                  ],
-                ),
-                SizedBox(height: 16),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Humidity'),
-                        SizedBox(height: 4),
-                        Text('32%'),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Precipitation'),
-                        SizedBox(height: 4),
-                        Text('3.8mm'),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Wind'),
-                        SizedBox(height: 4),
-                        Text('100m/s'),
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            ),
+        title: Text(
+          'Good afternoon',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.notifications_none, color: Colors.black),
+            onPressed: () {
+              // Handle notification button press
+            },
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Crop Health'),
-                SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Tomato'),
-                          SizedBox(height: 8),
-                          Text('20 June, 2024'),
-                          SizedBox(height: 8),
-                          Text('Early blight'),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Wheat'),
-                          SizedBox(height: 8),
-                          Text('20 June, 2024'),
-                          SizedBox(height: 8),
-                          Text('Healthy'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Marketplace'),
-                  SizedBox(height: 16),
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset('assets/beefsteak_tomato.png'),
-                              SizedBox(height: 8),
-                              Text('Beefsteak tomato'),
-                              SizedBox(height: 8),
-                              Text('10 Boxes'),
-                              SizedBox(height: 8),
-                              Text('K250.00 /Box'),
-                            ],
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Image.asset('assets/hass_avocado.png'),
-                              SizedBox(height: 8),
-                              Text('Hass Avocado'),
-                              SizedBox(height: 8),
-                              Text('38 Boxes'),
-                              SizedBox(height: 8),
-                              Text('K250.00 /Box'),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
+          IconButton(
+            icon: Icon(Icons.more_vert, color: Colors.black),
+            onPressed: () {
+              // Handle more options button press
+            },
           ),
         ],
       ),
-      bottomNavigationBar: Container(
-        decoration: BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.grey.shade300, width: 1.0),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              WeatherCard(
+                  temperature: 29,
+                  condition: 'Sunny',
+                  humidity: 32,
+                  precipitation: 3.8,
+                  windSpeed: 100
+              ),
+              SizedBox(height: 24),
+              _buildSectionTitle('Crop Health', onViewAllPressed: () {}),
+              SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    CropHealthCard(
+                        cropName: 'Tomato',
+                        scanDate: '20 June, 2024',
+                        health: 'Early blight',
+                        healthStatus: HealthStatus.warning
+                    ),
+                    SizedBox(width: 12),
+                    CropHealthCard(
+                        cropName: 'Wheat',
+                        scanDate: '23, June 2024',
+                        health: 'Healthy',
+                        healthStatus: HealthStatus.good
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 24),
+              _buildSectionTitle('Marketplace', onViewAllPressed: () {}),
+              SizedBox(height: 8),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 200, // Adjust this width as needed
+                      child: MarketplaceCard(
+                          imageUrl: 'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                          productName: 'Beefsteak tomato',
+                          quantity: '10 Boxes',
+                          price: 'K250.00 /Box',
+                          onBuyPressed: () {}
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    SizedBox(
+                      width: 200, // Adjust this width as needed
+                      child: MarketplaceCard(
+                          imageUrl: 'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
+                          productName: 'Hass Avocado',
+                          quantity: '38 Boxes',
+                          price: 'K250.00 /Box',
+                          onBuyPressed: () {}
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    SizedBox(
+                      width: 200, // Adjust this width as needed
+                      child: MarketplaceCard(
+                          imageUrl: 'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
+                          productName: 'Hass Avocado',
+                          quantity: '38 Boxes',
+                          price: 'K250.00 /Box',
+                          onBuyPressed: () {}
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            ],
           ),
         ),
-        child: BottomNavigationBar(
-          items: const [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.dashboard),
-              label: 'Overview',
-            ),
-            BottomNavigationBarItem(
-              icon: FaIcon(
-                FontAwesomeIcons.seedling,
-                size: 20,
-                color: Colors.green,
-              ),
-              label: 'Crops',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.store),
-              label: 'Market',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.account_circle),
-              label: 'Account',
-            ),
-          ],
-          backgroundColor: Colors.white,
-          unselectedItemColor: Colors.black54,
-          selectedItemColor: Colors.black,
-          type: BottomNavigationBarType.fixed,
-        ),
       ),
+      bottomNavigationBar: CustomBottomNavBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+          // Handle navigation to different screens based on index
+        },
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, {required VoidCallback onViewAllPressed}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        TextButton(
+          onPressed: onViewAllPressed,
+          child: Text('View all', style: TextStyle(color: Colors.blue)),
+        ),
+      ],
     );
   }
 }

@@ -145,5 +145,4 @@ class _SignInState extends ConsumerState<SignIn> {
   }
 }
 
-// Add this provider to your providers file
 final signInLoadingProvider = StateProvider<bool>((ref) => false);
