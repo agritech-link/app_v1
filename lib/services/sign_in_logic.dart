@@ -2,6 +2,8 @@ import 'package:AgriTech_Link/providers/sign_in_notifier.dart';
 import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
 import 'package:flutter/material.dart';
 
+
+
 class SignInLogic {
   static bool isValidPassword(String password) {
     final regex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$');
