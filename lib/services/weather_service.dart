@@ -9,6 +9,8 @@ class WeatherService {
   static const String CACHE_KEY = 'weather_cache';
   static const Duration CACHE_DURATION = Duration(hours: 2);
 
+  DateTime? _lastLoginDate;
+
   late SharedPreferences _prefs;
   WeatherCardData? _cachedData;
   DateTime? _lastFetchTime;
@@ -26,6 +28,7 @@ class WeatherService {
       final Map<String, dynamic> cached = json.decode(cachedJson);
       _cachedData = WeatherCardData.fromJson(cached['data']);
       _lastFetchTime = DateTime.parse(cached['timestamp']);
+      _lastLoginDate = DateTime.tryParse(cached['lastLoginDate'] ?? '');
     }
   }
 
@@ -33,6 +36,7 @@ class WeatherService {
     final String cachedJson = json.encode({
       'data': data.toJson(),
       'timestamp': DateTime.now().toIso8601String(),
+      'lastLoginDate': DateTime.now().toIso8601String(),
     });
     await _prefs.setString(CACHE_KEY, cachedJson);
   }

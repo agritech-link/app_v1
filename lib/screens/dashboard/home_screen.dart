@@ -3,6 +3,8 @@ import 'package:AgriTech_Link/custom_widgets/crop_health_card.dart';
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:AgriTech_Link/custom_widgets/marketplace_item.dart';
 import 'package:AgriTech_Link/custom_widgets/weather_card.dart';
+import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
 import 'package:AgriTech_Link/services/weather_service.dart';
 import 'package:flutter/material.dart';
 
@@ -13,7 +15,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
-  final WeatherService _weatherService = WeatherService(apiKey: OPENWEATHER_API_KEY);
+  final WeatherService _weatherService =
+      WeatherService(apiKey: OPENWEATHER_API_KEY);
   WeatherCardData? _weatherData;
   bool _isLoadingWeather = true;
 
@@ -84,7 +87,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 isLoading: _isLoadingWeather,
               ),
               SizedBox(height: 24),
-              _buildSectionTitle('Crop Health', onViewAllPressed: () {}),
+              _buildSectionTitle('Crop Health', onViewAllPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CropsScreen()));
+              }),
               SizedBox(height: 8),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -105,7 +110,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               SizedBox(height: 24),
-              _buildSectionTitle('Marketplace', onViewAllPressed: () {}),
+              _buildSectionTitle('Marketplace', onViewAllPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => Market()));
+              }),
               SizedBox(height: 8),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
@@ -115,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 200,
                       child: MarketplaceCard(
                         imageUrl:
-                        'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                            'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                         productName: 'Beefsteak tomato',
                         quantity: '10 Boxes',
                         price: 'K250.00 /Box',
@@ -126,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 200,
                       child: MarketplaceCard(
                         imageUrl:
-                        'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
+                            'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
                         productName: 'Hass Avocado',
                         quantity: '38 Boxes',
                         price: 'K250.00 /Box',
@@ -137,7 +144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       width: 200,
                       child: MarketplaceCard(
                         imageUrl:
-                        'https://images.unsplash.com/photo-1459663296021-50769c04b149?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGFuZ2VyaW5lJTIwb3JhbmdlfGVufDB8fDB8fHww',
+                            'https://images.unsplash.com/photo-1459663296021-50769c04b149?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGFuZ2VyaW5lJTIwb3JhbmdlfGVufDB8fDB8fHww',
                         productName: 'Tangerine Oranges',
                         quantity: '96 Boxes',
                         price: 'K250.00 /Box',
@@ -162,7 +169,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, {required VoidCallback onViewAllPressed}) {
+  Widget _buildSectionTitle(String title,
+      {required VoidCallback onViewAllPressed}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -178,4 +186,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
