@@ -13,7 +13,7 @@ class CameraAnalysis extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => CameraPage()));
+                    .push(MaterialPageRoute(builder: (_) => UnifiedCameraPage()));
               },
               child: Text(
                 'Take Picture',
@@ -24,7 +24,7 @@ class CameraAnalysis extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (_) => GalleryPage()));
+                    .push(MaterialPageRoute(builder: (_) => UnifiedCameraPage()));
               },
               child: Text(
                 'Select from Gallery',

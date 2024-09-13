@@ -41,10 +41,31 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
 
   final Ref ref;
   final ImagePicker _picker = ImagePicker();
+  List<CameraDescription> cameras = [];
 
   Future<void> initializeCamera() async {
     final cameras = await availableCameras();
     final controller = CameraController(cameras[0], ResolutionPreset.medium);
+    await controller.initialize();
+    state = state.copyWith(controller: controller);
+  }
+
+  Future<void> flipCamera() async {
+    if (cameras.length < 2) return;
+
+    final lensDirection = state.controller!.description.lensDirection;
+    CameraDescription newCamera;
+    if (lensDirection == CameraLensDirection.back) {
+      newCamera = cameras.firstWhere(
+          (camera) => camera.lensDirection == CameraLensDirection.front,
+      );
+    } else {
+      newCamera = cameras.firstWhere(
+          (camera) => camera.lensDirection == CameraLensDirection.back,
+      );
+    }
+    
+    final controller = CameraController(newCamera, ResolutionPreset.medium);
     await controller.initialize();
     state = state.copyWith(controller: controller);
   }

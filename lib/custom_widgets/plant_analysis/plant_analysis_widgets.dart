@@ -1,19 +1,27 @@
+import 'package:AgriTech_Link/custom_widgets/plant_analysis/analysis_results.dart';
+import 'package:AgriTech_Link/screens/dashboard/crop_management/camera_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
 
 import '../../notifiers/camera_state_notifier.dart';
 
-class CameraPage extends ConsumerStatefulWidget {
+class UnifiedCameraPage extends ConsumerStatefulWidget {
   @override
-  _CameraPageState createState() => _CameraPageState();
+  _UnifiedCameraPageState createState() => _UnifiedCameraPageState();
 }
 
-class _CameraPageState extends ConsumerState<CameraPage> {
+class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
+  late Future<void> _initializeControllerFuture;
+
   @override
   void initState() {
     super.initState();
-    ref.read(cameraStateProvider.notifier).initializeCamera();
+    _initializeControllerFuture = _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    await ref.read(cameraStateProvider.notifier).initializeCamera();
   }
 
   @override
@@ -21,84 +29,81 @@ class _CameraPageState extends ConsumerState<CameraPage> {
     final cameraState = ref.watch(cameraStateProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Take Plant Picture')),
-      body: Column(
-        children: [
-          Expanded(
-            child: cameraState.controller != null
-                ? CameraPreview(cameraState.controller!)
-                : Center(child: CircularProgressIndicator()),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              await ref.read(cameraStateProvider.notifier).takePicture();
-              Navigator.of(context)
-                  .push(MaterialPageRoute(builder: (_) => ResultsPage()));
-            },
-            child: Text('Take Picture'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class GalleryPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      appBar: AppBar(title: Text('Select Plant Picture')),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            await ref.read(cameraStateProvider.notifier).pickImageFromGallery();
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (_) => ResultsPage()));
-          },
-          child: Text(
-            'Select from Gallery',
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ResultsPage extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final cameraState = ref.watch(cameraStateProvider);
-
-    return Scaffold(
-      appBar: AppBar(title: Text('Analysis Results')),
-      body: cameraState.isAnalyzing
-          ? Center(child: CircularProgressIndicator())
-          : cameraState.condition != null
-              ? Padding(
-                  padding: const EdgeInsets.all(16.0),
+      backgroundColor: Colors.black,
+      body: FutureBuilder<void>(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Stack(
+              children: <Widget>[
+                if (cameraState.controller != null)
+                  CameraPreview(cameraState.controller!),
+                SafeArea(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Condition: ${cameraState.condition}',
-                          style: Theme.of(context).textTheme.displayMedium),
-                      SizedBox(height: 8),
-                      Text('Recommendations:',
-                          style: Theme.of(context).textTheme.displaySmall),
-                      ...cameraState.recommendations!
-                          .map((rec) => Text('• $rec'))
-                          .toList(),
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_back, color: Colors.white),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                            Text(
+                              'Scan crops',
+                              style: TextStyle(color: Colors.white, fontSize: 18),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.help_outline, color: Colors.white),
+                              onPressed: () {
+                                // Show help or instructions
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.photo_library, color: Colors.white, size: 30),
+                              onPressed: () async {
+                                await ref.read(cameraStateProvider.notifier).pickImageFromGallery();
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ResultsPage()));
+                              },
+                            ),
+                            FloatingActionButton(
+                              backgroundColor: Colors.white,
+                              child: Icon(Icons.camera_alt, color: Colors.black),
+                              onPressed: () async {
+                                await ref.read(cameraStateProvider.notifier).takePicture();
+                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ResultsPage()));
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.flip_camera_ios, color: Colors.white, size: 30),
+                              onPressed: () {
+                                ref.read(cameraStateProvider.notifier).flipCamera();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                )
-              : Center(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      ref.read(cameraStateProvider.notifier).analyzePlant();
-                    },
-                    child: Text('Analyze Plant'),
-                  ),
                 ),
+              ],
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }
+
