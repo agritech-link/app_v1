@@ -1,4 +1,4 @@
-import 'package:AgriTech_Link/providers/sign_in_notifier.dart';
+import 'package:AgriTech_Link/notifiers/sign_in_notifier.dart';
 import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
 import 'package:flutter/material.dart';
 

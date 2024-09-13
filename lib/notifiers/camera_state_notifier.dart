@@ -1,0 +1,100 @@
+import 'package:AgriTech_Link/providers/plant_analysis_service_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:camera/camera.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
+
+class CameraState {
+  final CameraController? controller;
+  final bool isAnalyzing;
+  final String? condition;
+  final List<String>? recommendations;
+  final File? imageFile;
+
+  CameraState({
+    this.controller,
+    this.isAnalyzing = false,
+    this.condition,
+    this.recommendations,
+    this.imageFile,
+  });
+
+  CameraState copyWith({
+    CameraController? controller,
+    bool? isAnalyzing,
+    String? condition,
+    List<String>? recommendations,
+    File? imageFile,
+  }) {
+    return CameraState(
+      controller: controller ?? this.controller,
+      isAnalyzing: isAnalyzing ?? this.isAnalyzing,
+      condition: condition ?? this.condition,
+      recommendations: recommendations ?? this.recommendations,
+      imageFile: imageFile ?? this.imageFile,
+    );
+  }
+}
+
+class CameraStateNotifier extends StateNotifier<CameraState> {
+  CameraStateNotifier(this.ref) : super(CameraState());
+
+  final Ref ref;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> initializeCamera() async {
+    final cameras = await availableCameras();
+    final controller = CameraController(cameras[0], ResolutionPreset.medium);
+    await controller.initialize();
+    state = state.copyWith(controller: controller);
+  }
+
+  Future<void> takePicture() async {
+    if (state.controller == null) return;
+
+    try {
+      final image = await state.controller!.takePicture();
+      state = state.copyWith(imageFile: File(image.path));
+    } catch (e) {
+      // Handle error (e.g., show a snackbar)
+    }
+  }
+
+  Future<void> pickImageFromGallery() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      state = state.copyWith(imageFile: File(pickedFile.path));
+    }
+  }
+
+  Future<void> analyzePlant() async {
+    if (state.imageFile == null) return;
+
+    try {
+      state = state.copyWith(isAnalyzing: true);
+      final results = await ref.read(plantAnalysisServiceProvider).analyzePlant(state.imageFile!);
+      state = state.copyWith(
+        isAnalyzing: false,
+        condition: results['condition'],
+        recommendations: List<String>.from(results['recommendations']),
+      );
+    } catch (e) {
+      state = state.copyWith(isAnalyzing: false);
+      // Handle error (e.g., show a snackbar)
+    }
+  }
+
+  void resetState() {
+    state = CameraState(controller: state.controller);
+  }
+
+  @override
+  void dispose() {
+    state.controller?.dispose();
+    super.dispose();
+  }
+}
+
+final cameraStateProvider = StateNotifierProvider<CameraStateNotifier, CameraState>((ref) {
+  return CameraStateNotifier(ref);
+});

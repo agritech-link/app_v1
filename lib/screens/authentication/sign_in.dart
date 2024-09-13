@@ -1,7 +1,7 @@
 import 'package:AgriTech_Link/services/sign_in_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/sign_in_notifier.dart';
+import '../../notifiers/sign_in_notifier.dart';
 
 class SignIn extends ConsumerStatefulWidget {
   const SignIn({Key? key}) : super(key: key);

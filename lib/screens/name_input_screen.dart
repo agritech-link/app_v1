@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'password_creation_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/sign_up_notifier.dart';
+import '../notifiers/sign_up_notifier.dart';
 
 class NameInputScreen extends ConsumerWidget {
   @override

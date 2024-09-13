@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/sign_up_notifier.dart';
+import '../notifiers/sign_up_notifier.dart';
 import '../screens/dashboard/home_screen.dart';
 
 class PasswordCreationScreen extends ConsumerWidget {

@@ -97,7 +97,7 @@ class CustomBottomNavBar extends StatelessWidget {
   void _openCamera(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => CameraPage()),
+      MaterialPageRoute(builder: (_) => CameraAnalysis()),
     );
   }
 
