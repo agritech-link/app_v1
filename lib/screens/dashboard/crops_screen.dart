@@ -10,7 +10,7 @@ class CropsScreen extends StatefulWidget {
 }
 
 class _MarketState extends State<CropsScreen> {
-  int _currentIndex = 2;
+  int _currentIndex = 1;
 
   final List<Widget> _pages = [
     OrdersPage(),

@@ -1,7 +1,7 @@
 import 'package:AgriTech_Link/custom_widgets/account_menu.dart';
+import 'package:AgriTech_Link/custom_widgets/plant_analysis/plant_analysis_widgets.dart';
 import 'package:AgriTech_Link/screens/authentication/sign_in.dart';
 import 'package:AgriTech_Link/screens/dashboard/accounts/accounts_overview.dart';
-import 'package:AgriTech_Link/screens/dashboard/crop_management/camera_page.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
@@ -97,7 +97,7 @@ class CustomBottomNavBar extends StatelessWidget {
   void _openCamera(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => CameraAnalysis()),
+      MaterialPageRoute(builder: (_) => UnifiedCameraPage()),
     );
   }
 

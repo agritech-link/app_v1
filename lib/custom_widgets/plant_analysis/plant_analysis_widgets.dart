@@ -1,5 +1,4 @@
 import 'package:AgriTech_Link/custom_widgets/plant_analysis/analysis_results.dart';
-import 'package:AgriTech_Link/screens/dashboard/crop_management/camera_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:camera/camera.dart';
@@ -22,6 +21,26 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
 
   Future<void> _initializeCamera() async {
     await ref.read(cameraStateProvider.notifier).initializeCamera();
+  }
+
+  Future<void> _processImageAndNavigate() async {
+    try {
+      final cameraNotifier = ref.read(cameraStateProvider.notifier);
+      await cameraNotifier.analyzePlant();
+
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (_) => ResultsPage())
+        );
+      }
+    } catch (e) {
+      // Show an error message to the user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error processing image: $e'))
+        );
+      }
+    }
   }
 
   @override
@@ -73,7 +92,7 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
                               icon: Icon(Icons.photo_library, color: Colors.white, size: 30),
                               onPressed: () async {
                                 await ref.read(cameraStateProvider.notifier).pickImageFromGallery();
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ResultsPage()));
+                                await _processImageAndNavigate();
                               },
                             ),
                             FloatingActionButton(
@@ -81,7 +100,7 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
                               child: Icon(Icons.camera_alt, color: Colors.black),
                               onPressed: () async {
                                 await ref.read(cameraStateProvider.notifier).takePicture();
-                                Navigator.of(context).push(MaterialPageRoute(builder: (_) => ResultsPage()));
+                                await _processImageAndNavigate();
                               },
                             ),
                             IconButton(
@@ -106,4 +125,3 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
     );
   }
 }
-

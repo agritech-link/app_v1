@@ -76,6 +76,8 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
     try {
       final image = await state.controller!.takePicture();
       state = state.copyWith(imageFile: File(image.path));
+
+      await analyzePlant();
     } catch (e) {
       // Handle error (e.g., show a snackbar)
     }
@@ -85,15 +87,18 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       state = state.copyWith(imageFile: File(pickedFile.path));
+
+      await analyzePlant();
     }
   }
-
   Future<void> analyzePlant() async {
     if (state.imageFile == null) return;
 
     try {
       state = state.copyWith(isAnalyzing: true);
+
       final results = await ref.read(plantAnalysisServiceProvider).analyzePlant(state.imageFile!);
+
       state = state.copyWith(
         isAnalyzing: false,
         condition: results['condition'],
@@ -104,6 +109,7 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
       // Handle error (e.g., show a snackbar)
     }
   }
+
 
   void resetState() {
     state = CameraState(controller: state.controller);
