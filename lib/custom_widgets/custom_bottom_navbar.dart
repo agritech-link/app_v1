@@ -1,4 +1,5 @@
 import 'package:AgriTech_Link/custom_widgets/account_menu.dart';
+import 'package:AgriTech_Link/custom_widgets/plant_analysis/analysis_results.dart';
 import 'package:AgriTech_Link/custom_widgets/plant_analysis/plant_analysis_widgets.dart';
 import 'package:AgriTech_Link/screens/authentication/sign_in.dart';
 import 'package:AgriTech_Link/screens/dashboard/accounts/accounts_overview.dart';
@@ -63,7 +64,7 @@ class CustomBottomNavBar extends StatelessWidget {
         page = HomeScreen();
         break;
       case 1:
-        page = CropsScreen();
+        page = ResultsPage();
         break;
       case 2:
         page = Market();
@@ -138,12 +139,12 @@ class CustomBottomNavBar extends StatelessWidget {
                 width: 60,
                 height: 60,
                 decoration: BoxDecoration(
-                  color: Colors.green,
+                  color: Color(0xFFDDF71D),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.camera_alt,
-                  color: Colors.white,
+                  color: Color(0xFF0B2115),
                   size: 30,
                 ),
               ),

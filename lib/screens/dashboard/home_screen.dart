@@ -5,6 +5,7 @@ import 'package:AgriTech_Link/custom_widgets/marketplace_item.dart';
 import 'package:AgriTech_Link/custom_widgets/weather_card.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
+import 'package:AgriTech_Link/services/greeting_service.dart';
 import 'package:AgriTech_Link/services/weather_service.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
       WeatherService(apiKey: OPENWEATHER_API_KEY);
   WeatherCardData? _weatherData;
   bool _isLoadingWeather = true;
+  final GreetingService _greetingService = GreetingService();
 
   @override
   void initState() {
@@ -51,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Color(0xFFF4F4F4),
       appBar: AppBar(
         title: Text(
-          'Good afternoon',
+          _greetingService.getGreeting(),
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Colors.transparent,
