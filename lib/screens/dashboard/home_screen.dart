@@ -6,7 +6,7 @@ import 'package:AgriTech_Link/custom_widgets/weather_card.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
 import 'package:AgriTech_Link/services/greeting_service.dart';
-import 'package:AgriTech_Link/services/weather_service.dart';
+import 'package:AgriTech_Link/services/weather/weather_service.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
