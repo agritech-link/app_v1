@@ -12,7 +12,7 @@ class RecommendationEngine {
       if (user == null) return recommendations;
 
       final farmResponse = await _supabase
-          .from('Farms')
+          .from('farms')
           .select()
           .eq('user_id', user.id)
           .single();
@@ -23,7 +23,7 @@ class RecommendationEngine {
 
 
       final cropsResponse = await _supabase
-          .from('Crops')
+          .from('crops')
           .select()
           .eq('farm_id', farmId);
 
@@ -47,7 +47,6 @@ class RecommendationEngine {
   Future<List<Recommendation>> _generateCropRecommendations(Map<String, dynamic> crop, WeatherForecastData forecastData) async {
     final List<Recommendation> recommendations = [];
 
-    // Example: Frost warning for vulnerable crops
     if (forecastData.dailyForecasts[0].tempMin < 2 && ['tomato', 'pepper', 'cucumber'].contains(crop['crop_type'])) {
       recommendations.add(Recommendation(
         type: RecommendationType.frostWarning,
@@ -64,7 +63,6 @@ class RecommendationEngine {
   List<Recommendation> _generateGeneralRecommendations(WeatherForecastData forecastData) {
     final List<Recommendation> recommendations = [];
 
-    // Example: Heavy rain alert
     if (forecastData.dailyForecasts[0].precipitation > 20) {
       recommendations.add(Recommendation(
         type: RecommendationType.heavyRain,
@@ -73,7 +71,6 @@ class RecommendationEngine {
       ));
     }
 
-    // Example: High wind alert
     if (forecastData.dailyForecasts[0].windSpeed > 30) {
       recommendations.add(Recommendation(
         type: RecommendationType.highWind,

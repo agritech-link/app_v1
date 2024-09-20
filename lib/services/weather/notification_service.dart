@@ -1,3 +1,4 @@
+import 'package:AgriTech_Link/engines/recommendation_engine.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -7,7 +8,7 @@ class NotificationService {
 
   Future<void> init() async {
     const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('app_icon');
-    final IOSInitializationSettings initializationSettingsIOS = IOSInitializationSettings();
+    final DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings();
     final InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsIOS,
@@ -19,7 +20,6 @@ class NotificationService {
     const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'weather_recommendations',
       'Weather Recommendations',
-      'Notifications for weather-based recommendations',
       importance: Importance.max,
       priority: Priority.high,
     );
@@ -60,4 +60,30 @@ class NotificationService {
       print('Error saving alert to database: $e');
     }
   }
+}
+
+// Make sure to include these classes in your project, possibly in a separate file
+enum RecommendationType {
+  frostWarning,
+  heavyRain,
+  highWind,
+  // Add more types as needed
+}
+
+enum RecommendationSeverity {
+  info,
+  warning,
+  critical,
+}
+
+class Recommendation {
+  final RecommendationType type;
+  final String message;
+  final RecommendationSeverity severity;
+
+  Recommendation({
+    required this.type,
+    required this.message,
+    required this.severity,
+  });
 }

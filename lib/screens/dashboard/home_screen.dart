@@ -2,7 +2,7 @@ import 'package:AgriTech_Link/const.dart';
 import 'package:AgriTech_Link/custom_widgets/crop_health_card.dart';
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:AgriTech_Link/custom_widgets/marketplace_item.dart';
-import 'package:AgriTech_Link/custom_widgets/weather_card.dart';
+import 'package:AgriTech_Link/custom_widgets/weather/weather_card.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
 import 'package:AgriTech_Link/services/greeting_service.dart';
@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   int _currentIndex = 0;
   final WeatherService _weatherService =
       WeatherService(apiKey: OPENWEATHER_API_KEY);
-  WeatherCardData? _weatherData;
+  WeatherForecastData? _weatherData;
   bool _isLoadingWeather = true;
   final GreetingService _greetingService = GreetingService();
 
@@ -33,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _isLoadingWeather = true;
     });
     try {
-      final data = await _weatherService.getWeatherCardData();
+      final data = await _weatherService.getWeatherForecastData();
       setState(() {
         _weatherData = data;
         _isLoadingWeather = false;
@@ -81,11 +81,11 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               WeatherCard(
-                temperature: _weatherData?.temperature,
-                condition: _weatherData?.condition,
-                humidity: _weatherData?.humidity,
-                precipitation: _weatherData?.precipitation,
-                windSpeed: _weatherData?.windSpeed,
+                temperature: _weatherData?.currentTemp,
+                condition: _weatherData?.dailyForecasts.first.condition,
+                humidity: _weatherData?.currentHumidity,
+                precipitation: _weatherData?.currentPrecipitation,
+                windSpeed: _weatherData?.currentWindSpeed,
                 isLoading: _isLoadingWeather,
               ),
               SizedBox(height: 24),

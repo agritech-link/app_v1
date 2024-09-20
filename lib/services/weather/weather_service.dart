@@ -12,7 +12,7 @@ class WeatherService {
 
   DateTime? _lastLoginDate;
 
-  late SharedPreferences _prefs;
+  SharedPreferences? _prefs;
   WeatherForecastData? _cachedData;
   DateTime? _lastFetchTime;
 
@@ -26,7 +26,8 @@ class WeatherService {
   }
 
   void _loadFromPrefs() {
-    final String? cachedJson = _prefs.getString(CACHE_KEY);
+    if (_prefs == null) return;
+    final String? cachedJson = _prefs!.getString(CACHE_KEY);
     if (cachedJson != null) {
       final Map<String, dynamic> cached = json.decode(cachedJson);
       _cachedData = WeatherForecastData.fromJson(cached['data']);
@@ -36,12 +37,13 @@ class WeatherService {
   }
 
   Future<void> _saveToPrefs(WeatherForecastData data) async {
+    if (_prefs == null) return;
     final String cachedJson = json.encode({
       'data': data.toJson(),
       'timestamp': DateTime.now().toIso8601String(),
       'lastLoginDate': DateTime.now().toIso8601String(),
     });
-    await _prefs.setString(CACHE_KEY, cachedJson);
+    await _prefs!.setString(CACHE_KEY, cachedJson);
   }
 
   Future<Map<String, dynamic>> getWeatherForecast() async {
@@ -85,6 +87,10 @@ class WeatherService {
   }
 
   Future<WeatherForecastData> getWeatherForecastData() async {
+    if (_prefs == null) {
+      await init();
+    }
+
     if (_shouldFetchNewData()) {
       try {
         final weatherData = await getWeatherForecast();
@@ -117,16 +123,14 @@ class WeatherService {
       if (user == null) return;
 
       final farmResponse = await _supabase
-          .from('Farms')
+          .from('farms')
           .select()
           .eq('user_id', user.id)
           .single();
 
-      if (farmResponse == null) throw farmResponse.isEmpty;
-
       final farmId = farmResponse['id'];
 
-      await _supabase.from('weather_data').insert({
+      await _supabase.from('WeatherData').insert({
         'farm_id': farmId,
         'timestamp': DateTime.now().toIso8601String(),
         'temperature': forecastData.currentTemp,
@@ -214,12 +218,14 @@ class DailyForecast {
 
   factory DailyForecast.fromJson(Map<String, dynamic> json) {
     return DailyForecast(
-      date: DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000),
-      tempMax: json['main']['temp_max'].round(),
-      tempMin: json['main']['temp_min'].round(),
-      condition: json['weather'][0]['main'],
+      date: json['dt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000)
+          : DateTime.now(),
+      tempMax: json['main']?['temp_max']?.round() ?? 0,
+      tempMin: json['main']?['temp_min']?.round() ?? 0,
+      condition: json['weather']?[0]?['main'] ?? 'Unknown',
       precipitation: json['rain']?['3h'] ?? 0.0,
-      windSpeed: json['wind']['speed'].round(),
+      windSpeed: json['wind']?['speed']?.round() ?? 0,
     );
   }
 
