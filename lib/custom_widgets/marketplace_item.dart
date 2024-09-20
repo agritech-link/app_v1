@@ -1,4 +1,5 @@
 import 'package:AgriTech_Link/custom_widgets/open_product_detail_drawer.dart';
+import 'package:AgriTech_Link/services/payments/pawapay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
@@ -7,6 +8,7 @@ class MarketplaceCard extends StatelessWidget {
   final String productName;
   final String quantity;
   final String price;
+  final PawaPayService pawaPayService;
 
   const MarketplaceCard({
     Key? key,
@@ -14,14 +16,32 @@ class MarketplaceCard extends StatelessWidget {
     required this.productName,
     required this.quantity,
     required this.price,
+    required this.pawaPayService
   }) : super(key: key);
+
+  void _handleBuy(BuildContext context) async {
+    try {
+      final response = await pawaPayService.initiatePayment(
+        amount: price,
+        currency: 'ZMW',
+        country: 'ZMB',
+        correspondent: 'MTN_MOMO_ZMB',
+        recipientPhoneNumber: '260763456789',
+        statementDescription: 'Payment for $productName',
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Payment failed: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         // Call function to open the drawer when card is tapped
-        openProductDetailDrawer(context, productName, imageUrl, quantity, price);
+        openProductDetailDrawer(context, productName, imageUrl, quantity, price, pawaPayService);
       },
       child: Container(
         decoration: BoxDecoration(

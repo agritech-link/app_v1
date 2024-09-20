@@ -6,6 +6,7 @@ import 'package:AgriTech_Link/custom_widgets/weather/weather_card.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
 import 'package:AgriTech_Link/services/greeting_service.dart';
+import 'package:AgriTech_Link/services/payments/pawapay_service.dart';
 import 'package:AgriTech_Link/services/weather/weather_service.dart';
 import 'package:flutter/material.dart';
 
@@ -127,7 +128,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             'https://images.unsplash.com/photo-1534940519139-f860fb3c6e38?q=80&w=1167&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                         productName: 'Beefsteak tomato',
                         quantity: '10 Boxes',
-                        price: 'K250.00 /Box',
+                        price: '250.00',
+                        pawaPayService: PawaPayService(apiToken: PAWAPAY_API_TOKEN),
                       ),
                     ),
                     SizedBox(width: 12),
@@ -138,7 +140,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             'https://images.unsplash.com/photo-1512070904629-fa988dab2fe1?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGhhc3MlMjBhdm9jYWRvfGVufDB8fDB8fHww',
                         productName: 'Hass Avocado',
                         quantity: '38 Boxes',
-                        price: 'K250.00 /Box',
+                        price: '250.00',
+                        pawaPayService: PawaPayService(apiToken: PAWAPAY_API_TOKEN),
                       ),
                     ),
                     SizedBox(width: 12),
@@ -149,7 +152,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             'https://images.unsplash.com/photo-1459663296021-50769c04b149?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8dGFuZ2VyaW5lJTIwb3JhbmdlfGVufDB8fDB8fHww',
                         productName: 'Tangerine Oranges',
                         quantity: '96 Boxes',
-                        price: 'K250.00 /Box',
+                        price: '250.00',
+                        pawaPayService: PawaPayService(apiToken: PAWAPAY_API_TOKEN),
                       ),
                     ),
                   ],

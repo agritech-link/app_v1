@@ -1,7 +1,8 @@
+import 'package:AgriTech_Link/services/payments/pawapay_service.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-void openProductDetailDrawer(BuildContext context, String productName, String imageUrl, String quantity, String price) {
+void openProductDetailDrawer(BuildContext context, String productName, String imageUrl, String quantity, String price, PawaPayService pawaPayService) {
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.white,
@@ -67,8 +68,27 @@ void openProductDetailDrawer(BuildContext context, String productName, String im
                                   borderRadius: BorderRadius.circular(3.0),
                                 ),
                               ),
-                              onPressed: () {
-                                // Handle button press
+                              onPressed: () async {
+                                try {
+                                  print('Sending request to url');
+                                  final response = await pawaPayService.initiatePayment(
+                                    amount: price,
+                                    currency: 'ZMW',
+                                    country: 'ZMB',
+                                    correspondent: 'MTN_MOMO_ZMB',
+                                    recipientPhoneNumber: '260763456789',
+                                    statementDescription: 'Payment',
+                                  );
+                                  print('Response body: ${response}');
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(content: Text('Payment successful: ${response['status']}')),
+                                  // );
+                                } catch (e) {
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   SnackBar(content: Text('Payment failed: $e')),
+                                  // );
+                                  print('Response body: ${e}');
+                                }
                               },
                               child: Text('Buy Now'),
                             ),
