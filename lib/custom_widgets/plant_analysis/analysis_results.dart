@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,7 +13,7 @@ class ScanResult {
   final String cropType;
   final DateTime scanDate;
   final String condition;
-  final List<String> recommendations;
+  final Map<String, List<String>> recommendations;
 
   ScanResult({
     required this.id,
@@ -22,12 +24,22 @@ class ScanResult {
   });
 
   factory ScanResult.fromJson(Map<String, dynamic> json) {
+    Map<String, List<String>> recommendations = {};
+    if (json['recommendations'] != null) {
+      Map<String, dynamic> decodedRecommendations = jsonDecode(json['recommendations']);
+      decodedRecommendations.forEach((key, value) {
+        if (value is List) {
+          recommendations[key] = List<String>.from(value);
+        }
+      });
+    }
+
     return ScanResult(
       id: json['id'],
       cropType: json['crop_type'],
       scanDate: DateTime.parse(json['scan_date']),
       condition: json['condition'],
-      recommendations: List<String>.from(json['recommendations']),
+      recommendations: recommendations,
     );
   }
 }
@@ -46,7 +58,26 @@ final scanResultsProvider = FutureProvider<List<ScanResult>>((ref) async {
       .eq('user_id', user.id)
       .order('scan_date', ascending: false);
 
-  return (response as List).map((data) => ScanResult.fromJson(data)).toList();
+  return (response as List).map((data) {
+    // Decode the recommendations JSON
+    Map<String, List<String>> recommendations = {};
+    if (data['recommendations'] != null) {
+      Map<String, dynamic> decodedRecommendations = jsonDecode(data['recommendations']);
+      decodedRecommendations.forEach((key, value) {
+        if (value is List) {
+          recommendations[key] = List<String>.from(value);
+        }
+      });
+    }
+
+    return ScanResult(
+      id: data['id'],
+      cropType: data['crop_type'],
+      scanDate: DateTime.parse(data['scan_date']),
+      condition: data['condition'],
+      recommendations: recommendations,
+    );
+  }).toList();
 });
 
 class ResultsPage extends ConsumerStatefulWidget {
@@ -79,11 +110,14 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
       throw Exception('User not authenticated');
     }
 
+    // Convert the recommendations Map to a JSON string
+    final recommendationsJson = jsonEncode(cameraState.recommendations);
+
     await supabase.from('scan_results').insert({
       'user_id': user.id,
-      'crop_type': 'Unknown', // You may want to add a way to specify crop type
+      'crop_type': 'Unknown', // You might want to update this based on the condition
       'condition': cameraState.condition,
-      'recommendations': cameraState.recommendations,
+      'recommendations': recommendationsJson,
     });
   }
 
@@ -229,30 +263,24 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
               SizedBox(height: 16),
               Text('Recommendations:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
-              ...result.recommendations
-                  .map((rec) => Padding(
-                        padding: EdgeInsets.only(top: 8),
-                        child: Text('• $rec'),
-                      ))
-                  .toList(),
+              // Loop through the recommendations map and display each category and its practices
+              ...result.recommendations.entries.map((entry) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(entry.key, style: TextStyle(fontWeight: FontWeight.bold)),
+                    ...entry.value.map((practice) => Padding(
+                      padding: EdgeInsets.only(left: 16, top: 4),
+                      child: Text('• $practice'),
+                    )),
+                    SizedBox(height: 8),
+                  ],
+                );
+              }).toList(),
             ],
           ),
         ),
       ),
     );
   }
-}
-
-Future<void> _saveScanResult(WidgetRef ref, CameraState cameraState) async {
-  final user = supabase.auth.currentUser;
-  if (user == null) {
-    throw Exception('User not authenticated');
-  }
-
-  await supabase.from('scan_results').insert({
-    'user_id': user.id,
-    'crop_type': 'Unknown',
-    'condition': cameraState.condition,
-    'recommendations': cameraState.recommendations,
-  });
 }

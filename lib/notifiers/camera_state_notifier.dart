@@ -8,7 +8,7 @@ class CameraState {
   final CameraController? controller;
   final bool isAnalyzing;
   final String? condition;
-  final List<String>? recommendations;
+  final Map<String, List<String>>? recommendations;
   final File? imageFile;
 
   CameraState({
@@ -23,7 +23,7 @@ class CameraState {
     CameraController? controller,
     bool? isAnalyzing,
     String? condition,
-    List<String>? recommendations,
+    Map<String, List<String>>? recommendations,
     File? imageFile,
   }) {
     return CameraState(
@@ -97,16 +97,23 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
     try {
       state = state.copyWith(isAnalyzing: true);
 
+      // Analyze the plant by calling the service
       final results = await ref.read(plantAnalysisServiceProvider).analyzePlant(state.imageFile!);
 
+      // Extract the condition and recommendations from the results
+      String condition = results['condition'];
+      Map<String, List<String>> recommendations = Map<String, List<String>>.from(results['recommendations']);
+
+      // Update the state with the condition and recommendations
       state = state.copyWith(
         isAnalyzing: false,
-        condition: results['condition'],
-        recommendations: List<String>.from(results['recommendations']),
+        condition: condition,
+        recommendations: recommendations,
       );
     } catch (e) {
       state = state.copyWith(isAnalyzing: false);
-      // Handle error (e.g., show a snackbar)
+      // Handle the error (e.g., show a snackbar or log it)
+      print("Error analyzing plant: $e");
     }
   }
 
