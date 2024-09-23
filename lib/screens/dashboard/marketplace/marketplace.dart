@@ -1,8 +1,7 @@
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/navigation_tabs.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/search_bar.dart';
-import 'package:flutter/material.dart';
-
+import 'package:cached_network_image/cached_network_image.dart'; // Import the package
 import 'package:flutter/material.dart';
 
 class MarketplacePage extends StatefulWidget {
@@ -77,34 +76,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
     );
   }
 
-  Widget _buildTab(String text, {bool isSelected = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Text(
-        text,
-        style: TextStyle(
-          color: isSelected ? Colors.black : Colors.grey,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildAddNewButton() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      margin: const EdgeInsets.only(right: 16),
-      decoration: BoxDecoration(
-        color: const Color(0xFFCBFA50),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: const Text(
-        'ADD NEW',
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-
   Widget _buildCategories() {
     final categories = ['ALL', 'FRUITS', 'VEGETABLES', 'PESTICIDES', 'SEEDS'];
     return SizedBox(
@@ -132,18 +103,10 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   Widget _buildProductGrid() {
     final products = [
-      {'name': 'Spell Millet', 'price': '950.00', 'image': 'assets/millet.jpg'},
-      {
-        'name': 'Tangerine Orange',
-        'price': '350.00',
-        'image': 'assets/orange.jpg'
-      },
-      {'name': 'Onion', 'price': '950.00', 'image': 'assets/onion.jpg'},
-      {
-        'name': 'Beefsteak tomato',
-        'price': '250.00',
-        'image': 'assets/tomato.jpg'
-      },
+      {'name': 'Spell Millet', 'price': '950.00', 'image': 'https://images.unsplash.com/photo-1620827792322-5960fe216618?q=80&w=1882&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+      {'name': 'Tangerine Orange', 'price': '350.00', 'image': 'https://images.unsplash.com/photo-1637272413524-b72ebb263d0b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+      {'name': 'Onion', 'price': '950.00', 'image': 'https://images.unsplash.com/photo-1668295037469-8b0e8d11cd2a?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
+      {'name': 'Beefsteak tomato', 'price': '250.00', 'image': 'https://images.unsplash.com/photo-1517666005606-69dea9b54865?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
     ];
 
     return GridView.builder(
@@ -163,18 +126,20 @@ class _MarketplacePageState extends State<MarketplacePage> {
 
   Widget _buildProductCard(Map<String, String> product) {
     return Card(
-      elevation: 2,
+      elevation: 0.7,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            child: Image.asset(
-              product['image']!,
-              height: 120,
+            child: CachedNetworkImage(
+              imageUrl: product['image']!,
+              height: 140,
               width: double.infinity,
               fit: BoxFit.cover,
+              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           Padding(
@@ -210,4 +175,5 @@ class _MarketplacePageState extends State<MarketplacePage> {
     );
   }
 }
+
 

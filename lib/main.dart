@@ -53,7 +53,7 @@ class _MyAppState extends State<MyApp> {
     // You can use shared_preferences to check if it's the first launch
     // For simplicity, we're using a dummy value here
     setState(() {
-      _isFirstLaunch = false; // Set this to true for testing splash screen
+      _isFirstLaunch = false;
     });
   }
 

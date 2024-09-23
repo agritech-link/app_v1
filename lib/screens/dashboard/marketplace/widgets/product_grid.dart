@@ -12,9 +12,15 @@ class ProductGrid extends StatefulWidget {
 class _ProductGridState extends State<ProductGrid> {
   Future<List<Product>> _fetchProducts() async {
     try {
+      final userId = Supabase.instance.client.auth.currentUser?.id;
+
+      if (userId == null) {
+        throw Exception('User not logged in');
+      }
       final response = await Supabase.instance.client
           .from('produce_listings')
-          .select();
+          .select()
+          .eq('user_id', userId);
 
       final List data = response as List;
       return data.map((item) => Product(
@@ -39,7 +45,7 @@ class _ProductGridState extends State<ProductGrid> {
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Center(child: Text('No products found'));
+          return Center(child: Text('No products found. Add some listings!'));
         }
 
         final products = snapshot.data!;

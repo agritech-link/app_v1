@@ -52,6 +52,7 @@ dependencies:
   flutter_local_notifications: ^17.2.2
   webview_flutter: ^4.9.0
   uuid: ^4.5.0
+  toastification: ^2.3.0
 
 dev_dependencies:
   flutter_test:

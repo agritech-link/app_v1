@@ -1,3 +1,4 @@
+import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/add_produce_listing_form.dart';
 import 'package:flutter/material.dart';
 
 class NavigationTabs extends StatelessWidget {
@@ -31,7 +32,9 @@ class NavigationTabs extends StatelessWidget {
         ),
         const Spacer(),
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => AddProduceListingForm()));
+          },
           child: Text('ADD NEW'),
           style: ElevatedButton.styleFrom(
               backgroundColor: Color(0xFFDDF71D),
