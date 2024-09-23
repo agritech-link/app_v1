@@ -1,3 +1,6 @@
+import 'package:AgriTech_Link/screens/dashboard/marketplace/marketplace.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/my_store.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/orders.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -91,6 +94,9 @@ class _MyAppState extends State<MyApp> {
         '/onboarding': (context) => OnboardingScreen(),
         '/dashboard': (context) => HomeScreen(),
         '/signin': (context) => SignIn(),
+        '/market': (context) => MarketplacePage(),
+        '/myStore': (context) => MyStore(),
+        '/orders': (context) => OrdersPage()
       },
     );
   }

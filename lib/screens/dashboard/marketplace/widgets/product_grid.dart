@@ -16,7 +16,6 @@ class _ProductGridState extends State<ProductGrid> {
           .from('produce_listings')
           .select();
 
-      // Parse response data
       final List data = response as List;
       return data.map((item) => Product(
         item['produce_name'] ?? '',
@@ -36,7 +35,7 @@ class _ProductGridState extends State<ProductGrid> {
       future: _fetchProducts(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return _buildShimmerGrid(); // Show shimmer effect
+          return _buildShimmerGrid();
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

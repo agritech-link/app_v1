@@ -4,7 +4,7 @@ import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:AgriTech_Link/custom_widgets/marketplace_item.dart';
 import 'package:AgriTech_Link/custom_widgets/weather/weather_card.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
-import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/my_store.dart';
 import 'package:AgriTech_Link/services/greeting_service.dart';
 import 'package:AgriTech_Link/services/payments/pawapay_service.dart';
 import 'package:AgriTech_Link/services/weather/weather_service.dart';
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               SizedBox(height: 24),
               _buildSectionTitle('Marketplace', onViewAllPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => Market()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => MyStore()));
               }),
               SizedBox(height: 8),
               SingleChildScrollView(

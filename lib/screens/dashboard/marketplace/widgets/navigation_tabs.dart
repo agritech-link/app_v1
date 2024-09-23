@@ -1,26 +1,48 @@
 import 'package:flutter/material.dart';
 
 class NavigationTabs extends StatelessWidget {
+  final int selectedIndex;
+  final Function(int) onTabSelected;
+
+  NavigationTabs({required this.selectedIndex, required this.onTabSelected});
+
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Padding(padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: Row(
       children: [
         Expanded(
-          child: TabButton(text: 'My Store', isSelected: true),
+          child: GestureDetector(
+            onTap: () => onTabSelected(0),
+            child: TabButton(text: 'My Store', isSelected: selectedIndex == 0),
+          ),
         ),
         Expanded(
-          child: TabButton(text: 'Market', isSelected: false),
+          child: GestureDetector(
+            onTap: () => onTabSelected(1),
+            child: TabButton(text: 'Market', isSelected: selectedIndex == 1),
+          ),
         ),
         Expanded(
-          child: TabButton(text: 'Orders', isSelected: false),
+          child: GestureDetector(
+            onTap: () => onTabSelected(2),
+            child: TabButton(text: 'Orders', isSelected: selectedIndex == 2),
+          ),
         ),
+        const Spacer(),
         ElevatedButton(
           onPressed: () {},
           child: Text('ADD NEW'),
           style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green, foregroundColor: Colors.white),
+              backgroundColor: Color(0xFFDDF71D),
+              foregroundColor: Color(0xFF0B2115),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(6)
+              )
+          ),
         ),
       ],
+    ),
     );
   }
 }
@@ -54,3 +76,5 @@ class TabButton extends StatelessWidget {
     );
   }
 }
+
+

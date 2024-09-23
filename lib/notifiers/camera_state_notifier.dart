@@ -7,31 +7,43 @@ import 'dart:io';
 class CameraState {
   final CameraController? controller;
   final bool isAnalyzing;
+  final bool isCameraActive;
   final String? condition;
   final Map<String, List<String>>? recommendations;
   final File? imageFile;
+  final int cameraIndex;
+  final bool analysisComplete;
 
   CameraState({
     this.controller,
     this.isAnalyzing = false,
+    this.isCameraActive = true,
     this.condition,
     this.recommendations,
     this.imageFile,
+    this.cameraIndex = 0,
+    this.analysisComplete = false,
   });
 
   CameraState copyWith({
     CameraController? controller,
     bool? isAnalyzing,
+    bool? isCameraActive,
     String? condition,
     Map<String, List<String>>? recommendations,
     File? imageFile,
+    int? cameraIndex,
+    bool? analysisComplete,
   }) {
     return CameraState(
       controller: controller ?? this.controller,
       isAnalyzing: isAnalyzing ?? this.isAnalyzing,
+      isCameraActive: isCameraActive ?? this.isCameraActive,
       condition: condition ?? this.condition,
       recommendations: recommendations ?? this.recommendations,
       imageFile: imageFile ?? this.imageFile,
+      cameraIndex: cameraIndex ?? this.cameraIndex,
+      analysisComplete: analysisComplete ?? this.analysisComplete,
     );
   }
 }
@@ -44,8 +56,10 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
   List<CameraDescription> cameras = [];
 
   Future<void> initializeCamera() async {
-    final cameras = await availableCameras();
-    final controller = CameraController(cameras[0], ResolutionPreset.medium);
+    if (!state.isCameraActive) return;
+
+    cameras = await availableCameras();
+    final controller = CameraController(cameras[state.cameraIndex], ResolutionPreset.medium);
     await controller.initialize();
     state = state.copyWith(controller: controller);
   }
@@ -53,21 +67,16 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
   Future<void> flipCamera() async {
     if (cameras.length < 2) return;
 
-    final lensDirection = state.controller!.description.lensDirection;
-    CameraDescription newCamera;
-    if (lensDirection == CameraLensDirection.back) {
-      newCamera = cameras.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.front,
-      );
-    } else {
-      newCamera = cameras.firstWhere(
-          (camera) => camera.lensDirection == CameraLensDirection.back,
-      );
-    }
-    
-    final controller = CameraController(newCamera, ResolutionPreset.medium);
-    await controller.initialize();
-    state = state.copyWith(controller: controller);
+    int newIndex = (state.cameraIndex + 1) % cameras.length;
+    await state.controller?.dispose();
+
+    final newController = CameraController(cameras[newIndex], ResolutionPreset.medium);
+    await newController.initialize();
+
+    state = state.copyWith(
+      controller: newController,
+      cameraIndex: newIndex,
+    );
   }
 
   Future<void> takePicture() async {
@@ -77,9 +86,9 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
       final image = await state.controller!.takePicture();
       state = state.copyWith(imageFile: File(image.path));
 
-      await analyzePlant();
+      await deactivateCamera();
     } catch (e) {
-      // Handle error (e.g., show a snackbar)
+      print("Error taking picture: $e");
     }
   }
 
@@ -88,38 +97,52 @@ class CameraStateNotifier extends StateNotifier<CameraState> {
     if (pickedFile != null) {
       state = state.copyWith(imageFile: File(pickedFile.path));
 
-      await analyzePlant();
+      await deactivateCamera();
     }
   }
+
   Future<void> analyzePlant() async {
     if (state.imageFile == null) return;
 
     try {
       state = state.copyWith(isAnalyzing: true);
 
-      // Analyze the plant by calling the service
       final results = await ref.read(plantAnalysisServiceProvider).analyzePlant(state.imageFile!);
 
-      // Extract the condition and recommendations from the results
       String condition = results['condition'];
       Map<String, List<String>> recommendations = Map<String, List<String>>.from(results['recommendations']);
 
-      // Update the state with the condition and recommendations
       state = state.copyWith(
         isAnalyzing: false,
         condition: condition,
         recommendations: recommendations,
+        analysisComplete: true,
       );
     } catch (e) {
       state = state.copyWith(isAnalyzing: false);
-      // Handle the error (e.g., show a snackbar or log it)
       print("Error analyzing plant: $e");
     }
   }
 
-
   void resetState() {
-    state = CameraState(controller: state.controller);
+    state = CameraState(isCameraActive: true);
+    initializeCamera();
+  }
+
+  Future<void> deactivateCamera() async {
+    await state.controller?.dispose();
+    state = state.copyWith(controller: null, isCameraActive: false);
+  }
+
+  Future<void> reactivateCamera() async {
+    state = state.copyWith(
+      isCameraActive: true,
+      condition: null,
+      recommendations: null,
+      imageFile: null,
+      analysisComplete: false,
+    );
+    await initializeCamera();
   }
 
   @override

@@ -23,18 +23,11 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
     await ref.read(cameraStateProvider.notifier).initializeCamera();
   }
 
-  Future<void> _processImageAndNavigate() async {
+  Future<void> _processImage() async {
     try {
       final cameraNotifier = ref.read(cameraStateProvider.notifier);
       await cameraNotifier.analyzePlant();
-
-      if (mounted) {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => ResultsPage())
-        );
-      }
     } catch (e) {
-      // Show an error message to the user
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Error processing image: $e'))
@@ -46,6 +39,25 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
   @override
   Widget build(BuildContext context) {
     final cameraState = ref.watch(cameraStateProvider);
+
+    if (cameraState.isAnalyzing) {
+      return Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(color: Colors.grey,),
+              SizedBox(height: 20),
+              Text('Analyzing plant...'),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (cameraState.condition != null && cameraState.recommendations != null) {
+      return ResultsPage();
+    }
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -92,7 +104,7 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
                               icon: Icon(Icons.photo_library, color: Colors.white, size: 30),
                               onPressed: () async {
                                 await ref.read(cameraStateProvider.notifier).pickImageFromGallery();
-                                await _processImageAndNavigate();
+                                await _processImage();
                               },
                             ),
                             FloatingActionButton(
@@ -100,13 +112,13 @@ class _UnifiedCameraPageState extends ConsumerState<UnifiedCameraPage> {
                               child: Icon(Icons.camera_alt, color: Colors.black),
                               onPressed: () async {
                                 await ref.read(cameraStateProvider.notifier).takePicture();
-                                await _processImageAndNavigate();
+                                await _processImage();
                               },
                             ),
                             IconButton(
                               icon: Icon(Icons.flip_camera_ios, color: Colors.white, size: 30),
-                              onPressed: () {
-                                ref.read(cameraStateProvider.notifier).flipCamera();
+                              onPressed: () async {
+                                await ref.read(cameraStateProvider.notifier).flipCamera();
                               },
                             ),
                           ],

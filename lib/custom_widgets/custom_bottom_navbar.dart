@@ -5,7 +5,7 @@ import 'package:AgriTech_Link/screens/authentication/sign_in.dart';
 import 'package:AgriTech_Link/screens/dashboard/accounts/accounts_overview.dart';
 import 'package:AgriTech_Link/screens/dashboard/crops_screen.dart';
 import 'package:AgriTech_Link/screens/dashboard/home_screen.dart';
-import 'package:AgriTech_Link/screens/dashboard/marketplace/market.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/my_store.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -67,7 +67,7 @@ class CustomBottomNavBar extends StatelessWidget {
         page = ResultsPage();
         break;
       case 2:
-        page = Market();
+        page = MyStore();
         break;
       case 3:
         page = AccountsOverview();
