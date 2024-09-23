@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:toastification/toastification.dart';
 
 class AddProduceListingForm extends StatefulWidget {
   @override
@@ -35,12 +37,9 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
           'unit': _selectedUnit,
         };
 
-        final response = await supabase
-            .from('produce_listings')
-            .insert(newListing);
+        final response = await supabase.from('produce_listings').insert(newListing);
 
-        // Check if the response is not null and doesn't contain an error
-        if (response != null && response.error == null) {
+        if (response != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Listing added successfully')),
           );
@@ -49,12 +48,33 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
           throw response?.error ?? Exception('Unknown error occurred');
         }
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error adding listing: $e')),
+        toastification.show(
+          context: context,
+          type: ToastificationType.success,
+          style: ToastificationStyle.flat,
+          title: Text("Error adding listing."),
+          description: Text("Something went wrong. Please try again"),
+          alignment: Alignment.bottomCenter,
+          autoCloseDuration: const Duration(seconds: 4),
+          animationBuilder: (
+              context,
+              animation,
+              alignment,
+              child,
+              ) {
+            return ScaleTransition(
+              scale: animation,
+              child: child,
+            );
+          },
+          primaryColor: Color(0xffff0000),
+          icon: Icon(Iconsax.close_square),
+          dragToClose: true,
         );
       }
     }
   }
+
 
   void _clearForm() {
     _produceName.clear();
