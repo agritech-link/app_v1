@@ -1,4 +1,4 @@
-import 'package:AgriTech_Link/engines/recommendation_engine.dart';
+// import 'package:AgriTech_Link/engines/recommendation_engine.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -14,6 +14,14 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  void triggerTestNotification() {
+    try {
+      final Recommendation recommendation = Recommendation(type: RecommendationType.frostWarning, message: 'This is a test frost warning notification', severity: RecommendationSeverity.warning);
+    } catch (e, s) {
+      print(s);
+    }
   }
 
   Future<void> showNotification(Recommendation recommendation) async {

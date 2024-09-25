@@ -26,7 +26,8 @@ class ScanResult {
   factory ScanResult.fromJson(Map<String, dynamic> json) {
     Map<String, List<String>> recommendations = {};
     if (json['recommendations'] != null) {
-      Map<String, dynamic> decodedRecommendations = jsonDecode(json['recommendations']);
+      Map<String, dynamic> decodedRecommendations =
+          jsonDecode(json['recommendations']);
       decodedRecommendations.forEach((key, value) {
         if (value is List) {
           recommendations[key] = List<String>.from(value);
@@ -62,7 +63,8 @@ final scanResultsProvider = FutureProvider<List<ScanResult>>((ref) async {
     // Decode the recommendations JSON
     Map<String, List<String>> recommendations = {};
     if (data['recommendations'] != null) {
-      Map<String, dynamic> decodedRecommendations = jsonDecode(data['recommendations']);
+      Map<String, dynamic> decodedRecommendations =
+          jsonDecode(data['recommendations']);
       decodedRecommendations.forEach((key, value) {
         if (value is List) {
           recommendations[key] = List<String>.from(value);
@@ -115,7 +117,8 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
 
     await supabase.from('scan_results').insert({
       'user_id': user.id,
-      'crop_type': 'Unknown', // You might want to update this based on the condition
+      'crop_type': 'Unknown',
+      // You might want to update this based on the condition
       'condition': cameraState.condition,
       'recommendations': recommendationsJson,
     });
@@ -130,15 +133,16 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Scan History', style: TextStyle(color: Colors.black)),
+        title:
+            const Text('Scan History', style: TextStyle(color: Colors.black)),
       ),
       body: scanResultsAsyncValue.when(
-        loading: () => Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(child: Text('Error: $err')),
         data: (scanResults) {
           return GridView.builder(
-            padding: EdgeInsets.all(16),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 0.8,
               crossAxisSpacing: 16,
@@ -153,7 +157,7 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
                   elevation: 1,
                   color: Colors.white,
                   child: Padding(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -164,18 +168,21 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
                           size: 48,
                           color: Colors.green,
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(result.cropType,
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                        SizedBox(height: 8),
-                        Text('Scan date', style: TextStyle(color: Colors.grey)),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        const Text('Scan date',
+                            style: TextStyle(color: Colors.grey)),
                         Text(
                             '${result.scanDate.day} ${_getMonthName(result.scanDate.month)}, ${result.scanDate.year}'),
-                        SizedBox(height: 8),
-                        Text('Result', style: TextStyle(color: Colors.grey)),
+                        const SizedBox(height: 8),
+                        const Text('Result',
+                            style: TextStyle(color: Colors.grey)),
                         Container(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: result.condition == 'Healthy'
                                 ? Colors.green
@@ -186,7 +193,7 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
                             result.condition,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 1,
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
@@ -210,8 +217,8 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
         onPressed: () {
           Navigator.pushNamed(context, '/camera');
         },
-        child: Icon(Icons.camera_alt),
         backgroundColor: Colors.green,
+        child: const Icon(Icons.camera_alt),
       ),
     );
   }
@@ -244,36 +251,37 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
         minChildSize: 0.5,
         maxChildSize: 0.9,
         builder: (_, controller) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: ListView(
             controller: controller,
             children: [
               Text(result.cropType,
                   style: Theme.of(context).textTheme.headlineMedium),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Text(
                   '${result.scanDate.day} ${_getMonthName(result.scanDate.month)}, ${result.scanDate.year}'),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               Text('Condition: ${result.condition}',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              SizedBox(height: 16),
-              Text('Recommendations:',
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
+              const Text('Recommendations:',
                   style: TextStyle(fontWeight: FontWeight.bold)),
               // Loop through the recommendations map and display each category and its practices
               ...result.recommendations.entries.map((entry) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(entry.key, style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text(entry.key,
+                        style: const TextStyle(fontWeight: FontWeight.bold)),
                     ...entry.value.map((practice) => Padding(
-                      padding: EdgeInsets.only(left: 16, top: 4),
-                      child: Text('• $practice'),
-                    )),
-                    SizedBox(height: 8),
+                          padding: const EdgeInsets.only(left: 16, top: 4),
+                          child: Text('• $practice'),
+                        )),
+                    const SizedBox(height: 8),
                   ],
                 );
               }).toList(),

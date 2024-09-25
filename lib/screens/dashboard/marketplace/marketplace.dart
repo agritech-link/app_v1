@@ -1,19 +1,67 @@
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
+import 'package:AgriTech_Link/providers/cart/cart_provider.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/navigation_tabs.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/search_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+// import '../providers/cart_provider.dart';
+// import '../widgets/custom_bottom_navbar.dart';
+// import '../widgets/navigation_tabs.dart';
+// import '../widgets/market_search_bar.dart';
 
-class MarketplacePage extends StatefulWidget {
+class MarketplacePage extends ConsumerStatefulWidget {
   const MarketplacePage({Key? key}) : super(key: key);
 
   @override
   _MarketplacePageState createState() => _MarketplacePageState();
 }
 
-class _MarketplacePageState extends State<MarketplacePage> {
+class _MarketplacePageState extends ConsumerState<MarketplacePage> {
   int _currentIndex = 2;
   int _currentMarketNavIndex = 1;
+  List<Map<String, dynamic>> _products = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchProducts();
+  }
+
+  Future<void> _fetchProducts() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final supabase = Supabase.instance.client;
+      final user = supabase.auth.currentUser;
+
+      if (user != null) {
+        final response = await supabase
+            .from('produce_listings')
+            .select()
+            .neq('user_id', user.id)
+            .order('created_at', ascending: false);
+
+        setState(() {
+          _products = List<Map<String, dynamic>>.from(response);
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
 
   void _onTabSelected(int index) {
     if (index == 0) {
@@ -38,12 +86,12 @@ class _MarketplacePageState extends State<MarketplacePage> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.print, color: Colors.black),
-            onPressed: () {},
+            icon: const Icon(Icons.shopping_cart, color: Colors.black),
+            onPressed: () => Navigator.pushNamed(context, '/cart'),
           ),
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.black),
-            onPressed: () {},
+            onPressed: _fetchProducts,
           ),
         ],
       ),
@@ -52,7 +100,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
           _buildTabs(),
           MarketSearchBar(),
           _buildCategories(),
-          Expanded(child: _buildProductGrid()),
+          Expanded(child: _isLoading ? _buildLoadingIndicator() : _buildProductGrid()),
         ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
@@ -63,6 +111,12 @@ class _MarketplacePageState extends State<MarketplacePage> {
           });
         },
       ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return const Center(
+      child: CircularProgressIndicator(),
     );
   }
 
@@ -102,13 +156,6 @@ class _MarketplacePageState extends State<MarketplacePage> {
   }
 
   Widget _buildProductGrid() {
-    final products = [
-      {'name': 'Spell Millet', 'price': '950.00', 'image': 'https://images.unsplash.com/photo-1620827792322-5960fe216618?q=80&w=1882&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
-      {'name': 'Tangerine Orange', 'price': '350.00', 'image': 'https://images.unsplash.com/photo-1637272413524-b72ebb263d0b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
-      {'name': 'Onion', 'price': '950.00', 'image': 'https://images.unsplash.com/photo-1668295037469-8b0e8d11cd2a?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
-      {'name': 'Beefsteak tomato', 'price': '250.00', 'image': 'https://images.unsplash.com/photo-1517666005606-69dea9b54865?q=80&w=1776&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'},
-    ];
-
     return GridView.builder(
       padding: const EdgeInsets.all(16),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -117,14 +164,14 @@ class _MarketplacePageState extends State<MarketplacePage> {
         crossAxisSpacing: 16,
         mainAxisSpacing: 16,
       ),
-      itemCount: products.length,
+      itemCount: _products.length,
       itemBuilder: (context, index) {
-        return _buildProductCard(products[index]);
+        return _buildProductCard(_products[index]);
       },
     );
   }
 
-  Widget _buildProductCard(Map<String, String> product) {
+  Widget _buildProductCard(Map<String, dynamic> product) {
     return Card(
       elevation: 0.7,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
@@ -134,7 +181,7 @@ class _MarketplacePageState extends State<MarketplacePage> {
           ClipRRect(
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
             child: CachedNetworkImage(
-              imageUrl: product['image']!,
+              imageUrl: product['image_url'] ?? '',
               height: 140,
               width: double.infinity,
               fit: BoxFit.cover,
@@ -148,23 +195,16 @@ class _MarketplacePageState extends State<MarketplacePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  product['name']!,
+                  product['produce_name'] ?? '',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('₦ ${product['price']!}/1kg'),
+                Text('₦ ${product['price']?.toString() ?? ''} / ${product['unit'] ?? 'unit'}'),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text('In stock'),
-                    Container(
-                      padding: const EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: const Icon(Icons.add, color: Colors.white, size: 16),
-                    ),
+                    Text('Quantity: ${product['quantity']?.toString() ?? '0'}'),
+                    _buildAddToCartButton(product),
                   ],
                 ),
               ],
@@ -174,6 +214,88 @@ class _MarketplacePageState extends State<MarketplacePage> {
       ),
     );
   }
+
+  Widget _buildAddToCartButton(Map<String, dynamic> product) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final cartNotifier = ref.watch(cartProvider.notifier);
+        return GestureDetector(
+          onTap: () => _showAddToCartDialog(product, cartNotifier),
+          child: Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Icon(Icons.add_shopping_cart, color: Colors.white, size: 16),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAddToCartDialog(Map<String, dynamic> product, CartNotifier cartNotifier) {
+    int quantity = 1;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add ${product['produce_name']} to cart'),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Price: ₦${product['price']} / ${product['unit']}'),
+                  const SizedBox(height: 16),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () {
+                          if (quantity > 1) {
+                            setState(() {
+                              quantity--;
+                            });
+                          }
+                        },
+                      ),
+                      Text(quantity.toString()),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () {
+                          setState(() {
+                            quantity++;
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Add to Cart'),
+              onPressed: () {
+                cartNotifier.addToCart(product['id'], quantity);
+                Navigator.of(context).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('${product['produce_name']} added to cart')),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
-
-

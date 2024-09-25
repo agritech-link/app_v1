@@ -1,3 +1,5 @@
+import 'package:AgriTech_Link/screens/dashboard/cart/cart_page.dart';
+import 'package:AgriTech_Link/screens/dashboard/cart/checkout_page.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/marketplace.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/my_store.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/orders.dart';
@@ -84,7 +86,7 @@ class _MyAppState extends State<MyApp> {
         ),
       ),
       home: _isLoading
-          ? CircularProgressIndicator() // Show loading indicator while checking auth state
+          ? CircularProgressIndicator()
           : _isFirstLaunch
           ? SplashScreen()
           : _isAuthenticated
@@ -96,7 +98,9 @@ class _MyAppState extends State<MyApp> {
         '/signin': (context) => SignIn(),
         '/market': (context) => MarketplacePage(),
         '/myStore': (context) => MyStore(),
-        '/orders': (context) => OrdersPage()
+        '/orders': (context) => OrdersPage(),
+        '/cart': (context) => const CartPage(),
+        '/checkout': (context) => const CheckoutPage()
       },
     );
   }
