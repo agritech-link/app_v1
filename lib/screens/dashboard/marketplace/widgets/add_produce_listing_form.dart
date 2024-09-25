@@ -37,31 +37,43 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
           'unit': _selectedUnit,
         };
 
+        print('Attempting to insert: $newListing');
+
         final response = await supabase.from('produce_listings').insert(newListing);
 
-        if (response != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Listing added successfully')),
+        print('Supabase response: $response');
+
+        if (response == null) {
+          print('Null response received. Treating as successful insertion.');
+          toastification.show(
+            context: context,
+            type: ToastificationType.success,
+            style: ToastificationStyle.flat,
+            title: Text("Success"),
+            description:
+            Text("Your produce listing has been added and is pending review."),
+            alignment: Alignment.bottomCenter,
+            autoCloseDuration: const Duration(seconds: 4),
+            primaryColor: Color(0xff199f19),
+            foregroundColor: Color(0xff0b2115),
           );
           _clearForm();
+          Navigator.pop(context);
         } else {
-          throw response?.error ?? Exception('Unknown error occurred');
+          print('Unexpected non-null response: $response');
+          throw Exception('Unexpected response from Supabase: $response');
         }
       } catch (e) {
+        print('Error in _submitForm: $e');
         toastification.show(
           context: context,
-          type: ToastificationType.success,
+          type: ToastificationType.error,
           style: ToastificationStyle.flat,
-          title: Text("Error adding listing."),
-          description: Text("Something went wrong. Please try again"),
+          title: Text("Error adding listing"),
+          description: Text(e.toString()),
           alignment: Alignment.bottomCenter,
           autoCloseDuration: const Duration(seconds: 4),
-          animationBuilder: (
-              context,
-              animation,
-              alignment,
-              child,
-              ) {
+          animationBuilder: (context, animation, alignment, child) {
             return ScaleTransition(
               scale: animation,
               child: child,
@@ -97,7 +109,8 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
           children: [
             TextFormField(
               controller: _produceName,
-              decoration: InputDecoration(labelText: 'Produce Name'),
+              cursorColor: Colors.black,
+              decoration: InputDecoration(labelText: 'Produce Name', labelStyle: TextStyle(color: Colors.grey), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black))),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter a produce name';
@@ -108,7 +121,8 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
             SizedBox(height: 20),
             TextFormField(
               controller: _quantity,
-              decoration: InputDecoration(labelText: 'Quantity'),
+              cursorColor: Colors.black,
+              decoration: InputDecoration(labelText: 'Quantity', labelStyle: TextStyle(color: Colors.grey), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black))),
               keyboardType: TextInputType.number,
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -123,7 +137,7 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
             SizedBox(height: 20),
             DropdownButtonFormField<String>(
               value: _selectedUnit,
-              decoration: InputDecoration(labelText: 'Unit'),
+              decoration: InputDecoration(labelText: 'Unit', labelStyle: TextStyle(color: Colors.grey), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black))),
               items: _units.map((String unit) {
                 return DropdownMenuItem<String>(
                   value: unit,
@@ -139,7 +153,8 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
             SizedBox(height: 20),
             TextFormField(
               controller: _price,
-              decoration: InputDecoration(labelText: 'Price'),
+              cursorColor: Colors.black,
+              decoration: InputDecoration(labelText: 'Price', labelStyle: TextStyle(color: Colors.grey), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black))),
               keyboardType: TextInputType.numberWithOptions(decimal: true),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -154,7 +169,8 @@ class _AddProduceListingFormState extends State<AddProduceListingForm> {
             SizedBox(height: 20),
             TextFormField(
               controller: _imageUrl,
-              decoration: InputDecoration(labelText: 'Image URL'),
+              cursorColor: Colors.black,
+              decoration: InputDecoration(labelText: 'Image URL', labelStyle: TextStyle(color: Colors.grey), focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.black))),
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter an image URL';

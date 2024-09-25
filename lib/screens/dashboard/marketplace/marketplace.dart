@@ -1,7 +1,7 @@
 import 'package:AgriTech_Link/custom_widgets/custom_bottom_navbar.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/navigation_tabs.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/search_bar.dart';
-import 'package:cached_network_image/cached_network_image.dart'; // Import the package
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 class MarketplacePage extends StatefulWidget {
