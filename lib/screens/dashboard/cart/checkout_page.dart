@@ -25,10 +25,11 @@ class CheckoutPage extends ConsumerWidget {
           )),
           const SizedBox(height: 16),
           ElevatedButton(
-            child: const Text('Place Order'),
+            child: const Text('Place Order',
+                    style: TextStyle(color: Colors.black),
+                  ),
             onPressed: () async {
-              // Implement order placement logic here
-              // For now, we'll just clear the cart and show a success message
+              // Order placement logic here
               await cartNotifier.clearCart();
               toastification.show(
                 context: context,

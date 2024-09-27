@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+
 // import '../providers/cart_provider.dart';
 // import '../widgets/custom_bottom_navbar.dart';
 // import '../widgets/navigation_tabs.dart';
@@ -100,7 +101,9 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
           _buildTabs(),
           MarketSearchBar(),
           _buildCategories(),
-          Expanded(child: _isLoading ? _buildLoadingIndicator() : _buildProductGrid()),
+          Expanded(
+              child:
+                  _isLoading ? _buildLoadingIndicator() : _buildProductGrid()),
         ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
@@ -185,7 +188,8 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
               height: 140,
               width: double.infinity,
               fit: BoxFit.cover,
-              placeholder: (context, url) => const Center(child: CircularProgressIndicator()),
+              placeholder: (context, url) =>
+                  const Center(child: CircularProgressIndicator()),
               errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
@@ -198,7 +202,8 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
                   product['produce_name'] ?? '',
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
-                Text('₦ ${product['price']?.toString() ?? ''} / ${product['unit'] ?? 'unit'}'),
+                Text(
+                    '₦ ${product['price']?.toString() ?? ''} / ${product['unit'] ?? 'unit'}'),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -227,26 +232,31 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
               color: Colors.green,
               borderRadius: BorderRadius.circular(4),
             ),
-            child: const Icon(Icons.add_shopping_cart, color: Colors.white, size: 16),
+            child: const Icon(Icons.add_shopping_cart,
+                color: Colors.white, size: 16),
           ),
         );
       },
     );
   }
 
-  void _showAddToCartDialog(Map<String, dynamic> product, CartNotifier cartNotifier) {
+  void _showAddToCartDialog(
+      Map<String, dynamic> product, CartNotifier cartNotifier) {
     int quantity = 1;
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(4),
+          ),
           title: Text('Add ${product['produce_name']} to cart'),
           content: StatefulBuilder(
             builder: (BuildContext context, StateSetter setState) {
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('Price: ₦${product['price']} / ${product['unit']}'),
+                  Text('Price: K${product['price']} / ${product['unit']}'),
                   const SizedBox(height: 16),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -277,25 +287,45 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
             },
           ),
           actions: [
-            TextButton(
-              child: const Text('Cancel'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: const Text('Add to Cart'),
-              onPressed: () {
-                cartNotifier.addToCart(product['id'], quantity);
-                Navigator.of(context).pop();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('${product['produce_name']} added to cart')),
-                );
-              },
-            ),
+Row(
+  mainAxisAlignment: MainAxisAlignment.center,
+  children: [
+    OutlinedButton(
+      style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.black,
+          side: const BorderSide(color: Colors.black),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6))
+      ),
+      child: const Text('Cancel'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    ),
+    SizedBox(width: 10,),
+    ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color(0xFFDDF71D),
+        foregroundColor: Color(0xFF0B2115),// Text color
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Button corner radius
+        ),
+      ),
+      child: const Text('Add to Cart'),
+      onPressed: () {
+        cartNotifier.addToCart(product['id'], quantity);
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('${product['produce_name']} added to cart')),
+        );
+      },
+    ),
+  ],
+)
           ],
         );
       },
     );
   }
+
 }
