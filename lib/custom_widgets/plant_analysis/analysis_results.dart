@@ -213,13 +213,6 @@ class _ResultsPageState extends ConsumerState<ResultsPage> {
           });
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/camera');
-        },
-        backgroundColor: Colors.green,
-        child: const Icon(Icons.camera_alt),
-      ),
     );
   }
 

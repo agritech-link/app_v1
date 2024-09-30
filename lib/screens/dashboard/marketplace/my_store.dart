@@ -1,6 +1,7 @@
 import 'package:AgriTech_Link/screens/dashboard/marketplace/marketplace.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/orders.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/navigation_tabs.dart';
+import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/placeholder_search_bar.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/product_grid.dart';
 import 'package:AgriTech_Link/screens/dashboard/marketplace/widgets/search_bar.dart';
 import 'package:flutter/material.dart';
@@ -67,7 +68,7 @@ class _MarketState extends State<MyStore> {
             onTabSelected: _onTabSelected,
             selectedIndex: _currentMarketNavIndex,
           ),
-          MarketSearchBar(),
+          PlaceholderSearchBar(),
           Expanded(
             child: ProductGrid(),
           )

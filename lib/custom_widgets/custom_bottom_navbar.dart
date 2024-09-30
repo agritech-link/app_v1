@@ -64,7 +64,7 @@ class CustomBottomNavBar extends StatelessWidget {
         page = HomeScreen();
         break;
       case 1:
-        page = ResultsPage();
+        page = CropsScreen();
         break;
       case 2:
         page = MyStore();

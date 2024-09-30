@@ -25,13 +25,15 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
   List<Map<String, dynamic>> _products = [];
   bool _isLoading = true;
 
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
     _fetchProducts();
   }
 
-  Future<void> _fetchProducts() async {
+  Future<void> _fetchProducts({String? searchQuery}) async {
     setState(() {
       _isLoading = true;
     });
@@ -41,11 +43,16 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
       final user = supabase.auth.currentUser;
 
       if (user != null) {
-        final response = await supabase
+        var query = supabase
             .from('produce_listings')
             .select()
-            .neq('user_id', user.id)
-            .order('created_at', ascending: false);
+            .neq('user_id', user.id);
+
+        if (searchQuery != null && searchQuery.isNotEmpty) {
+          query = query.ilike('produce_name', '%$searchQuery%');
+        }
+
+        final response = await query.order('created_at', ascending: false);
 
         setState(() {
           _products = List<Map<String, dynamic>>.from(response);
@@ -62,6 +69,13 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
         _isLoading = false;
       });
     }
+  }
+
+  void _onSearch(String query) {
+    setState(() {
+      _searchQuery = query;
+    });
+    _fetchProducts(searchQuery: query);
   }
 
   void _onTabSelected(int index) {
@@ -99,7 +113,7 @@ class _MarketplacePageState extends ConsumerState<MarketplacePage> {
       body: Column(
         children: [
           _buildTabs(),
-          MarketSearchBar(),
+          MarketSearchBar(onSearch: _onSearch),
           _buildCategories(),
           Expanded(
               child:
